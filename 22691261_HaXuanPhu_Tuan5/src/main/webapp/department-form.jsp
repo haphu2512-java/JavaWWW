@@ -18,8 +18,8 @@
     <br/>
     <h2>Departments Information</h2>
     <form action="department-controller" method="post">
-        <input type="hidden" name="id" value="${department.id}">
-        Name: <input type="text" name="name" value="${department.name}">
+        <input type="hidden" name="id" >
+        Name: <input type="text" name="name" >
         <br/>
         <input type="submit" value="Save">
     </form>

@@ -58,7 +58,7 @@ public class EmployeeServlet extends HttpServlet {
         switch (action) {
             case "new":
                 // Hiển thị form tạo mới employee
-                req.setAttribute("departments", this.departmentDAO.getAllDepartments());
+//                req.setAttribute("departments", this.departmentDAO.getAllDepartments());
                 req.getRequestDispatcher("employee-form.jsp").forward(req, resp);
                 break;
 

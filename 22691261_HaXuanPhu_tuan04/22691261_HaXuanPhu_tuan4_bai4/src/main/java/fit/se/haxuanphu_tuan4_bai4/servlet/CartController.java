@@ -54,6 +54,7 @@ public class CartController extends HttpServlet {
             request.getSession().setAttribute("cart", cart);
         }
 
+
         if (action == null) {
             request.getRequestDispatcher("/WEB-INF/views/giohang.jsp").forward(request, response);
         } else if (action.equals("add")) {
