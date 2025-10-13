@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style>
+        .banner-container {
+            width: 100%; /* Chiếm toàn bộ chiều ngang của phần tử cha */
+            height: 200px; /* Đặt một chiều cao cố định cho banner */
+            overflow: hidden; /* Ẩn bất kỳ phần nào của ảnh bị tràn ra ngoài */
+            position: relative; /* Cần thiết nếu bạn muốn thêm văn bản lên trên banner */
+        }
+
+        .banner-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Đây là thuộc tính quan trọng nhất */
+            object-position: center; /* Căn giữa ảnh trong khung */
+        }
+    </style>
+
+</head>
+    <body>
+        <p>
+            <div class="banner-container">
+                <img src="../../images/shopping.png" th:src="@{/images/shopping.png}"/>
+            </div>
+            <h1 th:text="${message}">mess</h1>
+
+
+            <p th:text="${date}"></p>
+        </p>
+        <p>Please select an option</p>
+        <ol>
+            <li><a href="product/list.html" th:href="@{/products}">Product List</a></li>
+            <li><a href="order/list.html" th:href="@{/orders}">Order List</a></li>
+            <li><a href="customer/list.html" th:href="@{/customers}">Customer List</a></li>
+        </ol>
+     </body>
+ </html>

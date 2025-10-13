@@ -1,215 +1,102 @@
-CREATE DATABASE IF NOT EXISTS `shoppingdb` /*!40100 DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci */;
-USE `shoppingdb`;
+CREATE DATABASE IF NOT EXISTS shoppingdb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE shoppingdb;
+CREATE TABLE `category` (
+                            `id` INT NOT NULL AUTO_INCREMENT,
+                            `name` VARCHAR(255) NOT NULL,
+                            PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+CREATE TABLE `customer` (
+                            `id` INT NOT NULL AUTO_INCREMENT,
+                            `name` VARCHAR(255) NOT NULL,
+                            `customer_since` DATE DEFAULT NULL,
+                            PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+CREATE TABLE `product` (
+                           `id` INT NOT NULL AUTO_INCREMENT,
+                           `name` VARCHAR(255) NOT NULL,
+                           `price` DECIMAL(10, 2) NOT NULL,
+                           `in_stock` BOOLEAN DEFAULT NULL,
+                           `category_id` INT DEFAULT NULL,
+                           PRIMARY KEY (`id`),
+                           CONSTRAINT `fk_product_category` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`)
+) ENGINE=InnoDB;
 
--- Dumping structure for table shoppingdb.comments
-CREATE TABLE IF NOT EXISTS `comments` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `text` text DEFAULT NULL,
-  `product_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `product_id` (`product_id`),
-  CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+-- Tạo bảng 'comment' sau khi 'product' đã được tạo.
+CREATE TABLE `comment` (
+                           `id` INT NOT NULL AUTO_INCREMENT,
+                           `text` TEXT,
+                           `product_id` INT DEFAULT NULL,
+                           PRIMARY KEY (`id`),
+                           CONSTRAINT `fk_comment_product` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`)
+) ENGINE=InnoDB;
 
--- Dumping data for table shoppingdb.comments: ~20 rows (approximately)
-DELETE FROM `comments`;
-INSERT INTO `comments` (`id`, `text`, `product_id`) VALUES
-	(1, 'Great product!', 11),
-	(2, 'Not worth the price.', 4),
-	(3, 'Fast delivery.', 3),
-	(4, 'Highly recommended.', 10),
-	(5, 'Very satisfied.', 1),
-	(6, 'Not worth the price.', 14),
-	(7, 'Not worth the price.', 13),
-	(8, 'Poor customer service.', 16),
-	(9, 'Not worth the price.', 10),
-	(10, 'Highly recommended.', 6),
-	(11, 'Highly recommended.', 10),
-	(12, 'Disappointed.', 15),
-	(13, 'Highly recommended.', 4),
-	(14, 'Excellent quality.', 14),
-	(15, 'Disappointed.', 9),
-	(16, 'Excellent quality.', 13),
-	(17, 'Disappointed.', 9),
-	(18, 'Excellent quality.', 1),
-	(19, 'Will buy again.', 7),
-	(20, 'Not worth the price.', 5);
+-- Tạo bảng 'orders' sau khi 'customer' đã được tạo.
+-- Lưu ý: 'orders' thay vì 'order' vì ORDER là một từ khóa trong SQL.
+CREATE TABLE `orders` (
+                          `id` INT NOT NULL AUTO_INCREMENT,
+                          `date` DATE NOT NULL,
+                          `customer_id` INT NOT NULL,
+                          PRIMARY KEY (`id`),
+                          CONSTRAINT `fk_orders_customer` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`id`)
+) ENGINE=InnoDB;
 
--- Dumping structure for table shoppingdb.customers
-CREATE TABLE IF NOT EXISTS `customers` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  `customerSince` date DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+-- Tạo bảng 'order_line' sau cùng, vì nó phụ thuộc vào cả 'orders' và 'product'.
+CREATE TABLE `order_line` (
+                              `id` INT NOT NULL AUTO_INCREMENT,
+                              `amount` INT NOT NULL,
+                              `purchase_price` DECIMAL(10, 2) NOT NULL,
+                              `order_id` INT NOT NULL,
+                              `product_id` INT NOT NULL,
+                              PRIMARY KEY (`id`),
+                              CONSTRAINT `fk_orderline_orders` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`),
+                              CONSTRAINT `fk_orderline_product` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`)
+) ENGINE=InnoDB;
 
--- Dumping data for table shoppingdb.customers: ~20 rows (approximately)
-DELETE FROM `customers`;
-INSERT INTO `customers` (`id`, `name`, `customerSince`) VALUES
-	(1, 'Karen', '2015-08-19'),
-	(2, 'Grace', '2015-06-23'),
-	(3, 'Frank', '2016-07-01'),
-	(4, 'Tina', '2021-06-19'),
-	(5, 'Steve', '2021-03-13'),
-	(6, 'Karen', '2021-01-23'),
-	(7, 'Frank', '2023-09-11'),
-	(8, 'Ivy', '2020-06-09'),
-	(9, 'Ivy', '2023-12-09'),
-	(10, 'Ivy', '2023-09-15'),
-	(11, 'Steve', '2020-11-07'),
-	(12, 'Olivia', '2021-03-03'),
-	(13, 'Quinn', '2017-08-02'),
-	(14, 'Tina', '2018-10-22'),
-	(15, 'Mona', '2017-11-27'),
-	(16, 'Hank', '2022-05-23'),
-	(17, 'Ivy', '2018-10-01'),
-	(18, 'Leo', '2018-07-09'),
-	(19, 'Tina', '2018-08-30'),
-	(20, 'Steve', '2023-02-16');
 
--- Dumping structure for table shoppingdb.orderlines
-CREATE TABLE IF NOT EXISTS `orderlines` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `order_id` int(11) DEFAULT NULL,
-  `product_id` int(11) DEFAULT NULL,
-  `amount` int(11) DEFAULT NULL,
-  `purchasePrice` decimal(10,2) DEFAULT NULL,
-  `purchase_price` double DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `order_id` (`order_id`),
-  KEY `product_id` (`product_id`),
-  CONSTRAINT `orderlines_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`),
-  CONSTRAINT `orderlines_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+INSERT INTO `category` (`id`, `name`) VALUES
+                                          (1, 'Điện tử & Công nghệ'),
+                                          (2, 'Sách & Văn phòng phẩm'),
+                                          (3, 'Thời trang & Phụ kiện');
 
--- Dumping data for table shoppingdb.orderlines: ~20 rows (approximately)
-DELETE FROM `orderlines`;
-INSERT INTO `orderlines` (`id`, `order_id`, `product_id`, `amount`, `purchasePrice`, `purchase_price`) VALUES
-	(1, 20, 13, 2, 122.21, NULL),
-	(2, 12, 6, 5, 53.67, NULL),
-	(3, 11, 4, 2, 454.72, NULL),
-	(4, 10, 19, 5, 428.62, NULL),
-	(5, 1, 3, 4, 298.72, NULL),
-	(6, 8, 18, 8, 190.33, NULL),
-	(7, 17, 11, 7, 401.50, NULL),
-	(8, 3, 2, 7, 42.13, NULL),
-	(9, 5, 5, 9, 114.84, NULL),
-	(10, 5, 8, 9, 27.69, NULL),
-	(11, 15, 19, 1, 320.77, NULL),
-	(12, 17, 8, 3, 224.72, NULL),
-	(13, 10, 18, 9, 143.20, NULL),
-	(14, 7, 20, 3, 79.79, NULL),
-	(15, 14, 10, 1, 314.46, NULL),
-	(16, 4, 16, 3, 476.43, NULL),
-	(17, 17, 8, 8, 407.43, NULL),
-	(18, 13, 19, 4, 69.18, NULL),
-	(19, 19, 17, 10, 247.00, NULL),
-	(20, 3, 8, 4, 340.08, NULL);
+-- 2. Chèn dữ liệu cho bảng 'customer'
+INSERT INTO `customer` (`id`, `name`, `customer_since`) VALUES
+                                                            (1, 'Nguyễn Văn An', '2023-01-15'),
+                                                            (2, 'Trần Thị Bình', '2022-11-20'),
+                                                            (3, 'Lê Minh Cường', '2024-05-10');
 
--- Dumping structure for table shoppingdb.orders
-CREATE TABLE IF NOT EXISTS `orders` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `date` date DEFAULT NULL,
-  `customer_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `customer_id` (`customer_id`),
-  CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+-- 3. Chèn dữ liệu cho bảng 'product' (sử dụng category_id từ trên)
+INSERT INTO `product` (`id`, `name`, `price`, `in_stock`, `category_id`) VALUES
+                                                                             (1, 'Laptop Dell XPS 15', 25000000.00, 1, 1),
+                                                                             (2, 'iPhone 15 Pro Max 256GB', 30500000.00, 1, 1),
+                                                                             (3, 'Sách "Nhà Giả Kim"', 85000.00, 1, 2),
+                                                                             (4, 'Áo Thun Cotton Trơn', 150000.00, 1, 3),
+                                                                             (5, 'Quần Jeans Levi\'s 501', 800000.00, 0, 3),
+                                                                             (6, 'Bàn phím cơ Keychron K2', 2100000.00, 1, 1);
 
--- Dumping data for table shoppingdb.orders: ~20 rows (approximately)
-DELETE FROM `orders`;
+-- 4. Chèn dữ liệu cho bảng 'comment' (sử dụng product_id từ trên)
+INSERT INTO `comment` (`id`, `text`, `product_id`) VALUES
+                                                       (1, 'Máy dùng rất tốt, pin trâu, hiệu năng mạnh mẽ.', 1),
+                                                       (2, 'Camera chụp ảnh siêu nét, rất đáng tiền!', 2),
+                                                       (3, 'Một cuốn sách rất ý nghĩa và đáng đọc.', 3),
+                                                       (4, 'Chất lượng bàn phím tuyệt vời, gõ rất sướng tay.', 6);
+
+-- 5. Chèn dữ liệu cho bảng 'orders' (sử dụng customer_id từ trên)
 INSERT INTO `orders` (`id`, `date`, `customer_id`) VALUES
-	(1, '2021-10-18', 6),
-	(2, '2016-12-27', 15),
-	(3, '2015-09-24', 10),
-	(4, '2016-09-14', 12),
-	(5, '2017-09-01', 1),
-	(6, '2015-04-20', 7),
-	(7, '2019-05-30', 4),
-	(8, '2016-03-15', 10),
-	(9, '2022-07-15', 8),
-	(10, '2015-05-08', 8),
-	(11, '2016-05-11', 19),
-	(12, '2017-06-22', 15),
-	(13, '2017-08-16', 14),
-	(14, '2016-08-18', 7),
-	(15, '2023-11-03', 4),
-	(16, '2017-06-16', 6),
-	(17, '2015-11-14', 18),
-	(18, '2021-06-19', 6),
-	(19, '2022-10-30', 20),
-	(20, '2018-10-21', 5);
+                                                       (1, '2024-10-01', 1), -- Đơn hàng của Nguyễn Văn An
+                                                       (2, '2024-10-05', 2), -- Đơn hàng của Trần Thị Bình
+                                                       (3, '2024-10-11', 1); -- Một đơn hàng khác của Nguyễn Văn An
 
--- Dumping structure for table shoppingdb.products
-CREATE TABLE IF NOT EXISTS `products` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  `price` double DEFAULT NULL,
-  `inStock` tinyint(1) DEFAULT NULL,
-  `in_stock` bit(1) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+-- 6. Chèn dữ liệu cho bảng 'order_line' (chi tiết đơn hàng)
+-- Liên kết 'orders' và 'product'
+INSERT INTO `order_line` (`id`, `amount`, `purchase_price`, `order_id`, `product_id`) VALUES
+-- Chi tiết cho Đơn hàng 1
+(1, 1, 25000000.00, 1, 1),
+(2, 2, 150000.00, 1, 4),
 
--- Dumping data for table shoppingdb.products: ~20 rows (approximately)
-DELETE FROM `products`;
-INSERT INTO `products` (`id`, `name`, `price`, `inStock`, `in_stock`) VALUES
-	(1, 'Pepsi', 488.75, 1, NULL),
-	(2, 'Cocacola', 114.13, 0, NULL),
-	(3, 'CookiesBS', 247.79, 1, NULL),
-	(4, 'Rice ST25', 337.2, 1, NULL),
-	(5, 'SugarNet', 423.35, 1, NULL),
-	(6, 'Rice TL', 21.88, 0, NULL),
-	(7, 'Skirt Kids', 189.75, 1, NULL),
-	(8, 'Chicken', 97.26, 1, NULL),
-	(9, 'Milk US', 372.48, 0, NULL),
-	(10, 'WaterLocal', 299.15, 0, NULL),
-	(11, 'PenTL', 65.6, 0, NULL),
-	(12, 'CocaBrazil', 294.61, 1, NULL),
-	(13, 'Milk NZ', 152.86, 0, NULL),
-	(14, 'Milk VN', 190.66, 1, NULL),
-	(15, 'Rice In', 79.41, 0, NULL),
-	(16, 'Chicken Bigsize', 370.97, 0, NULL),
-	(17, 'Bread Stick', 291.59, 0, NULL),
-	(18, 'Bread Slide', 283.47, 0, NULL),
-	(19, 'Sugar pices', 146.66, 0, NULL),
-	(20, 'Skirt woman', 143.4, 1, NULL);
+-- Chi tiết cho Đơn hàng 2
+(3, 1, 85000.00, 2, 3),
+(4, 5, 150000.00, 2, 4),
 
--- Dumping structure for table shoppingdb.users
-CREATE TABLE IF NOT EXISTS `users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `firstName` varchar(100) DEFAULT NULL,
-  `lastName` varchar(100) DEFAULT NULL,
-  `nationality` varchar(255) DEFAULT NULL,
-  `age` int(11) DEFAULT NULL,
-  `first_name` varchar(255) DEFAULT NULL,
-  `last_name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
--- Dumping data for table shoppingdb.users: ~20 rows (approximately)
-DELETE FROM `users`;
-INSERT INTO `users` (`id`, `firstName`, `lastName`, `nationality`, `age`, `first_name`, `last_name`) VALUES
-	(1, 'Grace', 'Steve', 'UK', 60, NULL, NULL),
-	(2, 'Grace', 'Karen', 'UK', 63, NULL, NULL),
-	(3, 'Hank', 'Quinn', 'USA', 65, NULL, NULL),
-	(4, 'Karen', 'Hank', 'USA', 59, NULL, NULL),
-	(5, 'Leo', 'Steve', 'USA', 26, NULL, NULL),
-	(6, 'Tina', 'Alice', 'Rusia', 32, NULL, NULL),
-	(7, 'Mona', 'Rachel', 'Rusia', 62, NULL, NULL),
-	(8, 'Hank', 'Alice', 'Rusia', 27, NULL, NULL),
-	(9, 'Charlie', 'Paul', 'Rusia', 63, NULL, NULL),
-	(10, 'Steve', 'Charlie', 'Rusia', 55, NULL, NULL),
-	(11, 'Bob', 'Leo', 'Australia', 38, NULL, NULL),
-	(12, 'Steve', 'Quinn', 'Australia', 52, NULL, NULL),
-	(13, 'Charlie', 'Quinn', 'Australia', 27, NULL, NULL),
-	(14, 'Paul', 'Hank', 'Australia', 63, NULL, NULL),
-	(15, 'Ivy', 'Nate', 'France', 24, NULL, NULL),
-	(16, 'Leo', 'Paul', 'France', 38, NULL, NULL),
-	(17, 'Steve', 'Paul', 'France', 58, NULL, NULL),
-	(18, 'Bob', 'Jack', 'Brasil', 22, NULL, NULL),
-	(19, 'Grace', 'Steve', 'Brasil', 46, NULL, NULL),
-	(20, 'Nate', 'Leo', 'Country19', 46, NULL, NULL);
-
-
-
-
+-- Chi tiết cho Đơn hàng 3
+(5, 1, 30500000.00, 3, 2),
+(6, 1, 2100000.00, 3, 6);
