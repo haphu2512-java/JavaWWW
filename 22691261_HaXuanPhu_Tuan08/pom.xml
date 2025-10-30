@@ -11,8 +11,8 @@
     <groupId>fit.se</groupId>
     <artifactId>HaXuanPhu_Tuan07</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>22691261_HaXuanPhu_Tuan07</name>
-    <description>22691261_HaXuanPhu_Tuan07</description>
+    <name>22691261_HaXuanPhu_Tuan08</name>
+    <description>22691261_HaXuanPhu_Tuan08</description>
     <url/>
     <licenses>
         <license/>
@@ -77,6 +77,12 @@
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
+        </dependency>
+
+        <!-- Thêm dependency này vào pom.xml -->
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-springsecurity6</artifactId>
         </dependency>
 
         <dependency>
