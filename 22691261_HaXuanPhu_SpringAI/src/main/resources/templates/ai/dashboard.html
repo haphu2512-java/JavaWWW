@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Assistant Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .ai-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .ai-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .ai-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/products">Shopping Management</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" href="/customers">Khách hàng</a></li>
+                <li class="nav-item"><a class="nav-link" href="/products">Sản phẩm</a></li>
+                <li class="nav-item"><a class="nav-link" href="/orders">Hóa đơn</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/ai">🤖 AI Assistant</a></li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <span class="navbar-text text-white me-3">
+                        👤 <strong sec:authentication="name"></strong>
+                        <span class="badge bg-warning text-dark" sec:authentication="authorities"></span>
+                    </span>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <form th:action="@{/logout}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-outline-light btn-sm">Đăng xuất</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4">🤖 AI Assistant Dashboard</h1>
+        <p class="lead text-muted">Trợ lý thông minh cho quản lý bán hàng</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- AI Chat -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card ai-card h-100 text-center" onclick="window.location.href='/ai/chat'">
+                <div class="card-body">
+                    <div class="ai-icon">💬</div>
+                    <h5 class="card-title">AI Chat</h5>
+                    <p class="card-text">Trò chuyện với trợ lý AI để nhận tư vấn và hỗ trợ</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Description Generator -->
+        <div class="col-md-6 col-lg-4" sec:authorize="hasRole('ADMIN')">
+            <div class="card ai-card h-100 text-center" onclick="window.location.href='/products'">
+                <div class="card-body">
+                    <div class="ai-icon">📝</div>
+                    <h5 class="card-title">Tạo Mô Tả Sản Phẩm</h5>
+                    <p class="card-text">AI tự động tạo mô tả sản phẩm hấp dẫn và chuyên nghiệp</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Recommendations -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card ai-card h-100 text-center" onclick="window.location.href='/customers'">
+                <div class="card-body">
+                    <div class="ai-icon">🎯</div>
+                    <h5 class="card-title">Gợi Ý Sản Phẩm</h5>
+                    <p class="card-text">Gợi ý sản phẩm phù hợp dựa trên lịch sử mua hàng</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Marketing Content Generator -->
+        <div class="col-md-6 col-lg-4" sec:authorize="hasRole('ADMIN')">
+            <div class="card ai-card h-100 text-center" onclick="window.location.href='/products'">
+                <div class="card-body">
+                    <div class="ai-icon">📢</div>
+                    <h5 class="card-title">Tạo Nội Dung Marketing</h5>
+                    <p class="card-text">AI tạo nội dung quảng cáo thu hút khách hàng</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback Analysis -->
+        <div class="col-md-6 col-lg-4" sec:authorize="hasRole('ADMIN')">
+            <div class="card ai-card h-100 text-center" onclick="window.location.href='/products'">
+                <div class="card-body">
+                    <div class="ai-icon">📊</div>
+                    <h5 class="card-title">Phân Tích Phản Hồi</h5>
+                    <p class="card-text">Phân tích ý kiến khách hàng và đưa ra nhận định</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sales Report -->
+        <div class="col-md-6 col-lg-4" sec:authorize="hasRole('ADMIN')">
+            <div class="card ai-card h-100 text-center" onclick="window.location.href='/ai/report/sales'">
+                <div class="card-body">
+                    <div class="ai-icon">📈</div>
+                    <h5 class="card-title">Báo Cáo Bán Hàng</h5>
+                    <p class="card-text">AI phân tích dữ liệu và tạo báo cáo thông minh</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5 p-4 bg-light rounded">
+        <h4>🌟 Tính năng AI nổi bật:</h4>
+        <ul class="list-unstyled mt-3">
+            <li class="mb-2">✅ <strong>Tự động hóa nội dung:</strong> Tạo mô tả sản phẩm và nội dung marketing tự động</li>
+            <li class="mb-2">✅ <strong>Gợi ý thông minh:</strong> Đề xuất sản phẩm phù hợp cho từng khách hàng</li>
+            <li class="mb-2">✅ <strong>Phân tích dữ liệu:</strong> Hiểu sâu về phản hồi khách hàng và xu hướng bán hàng</li>
+            <li class="mb-2">✅ <strong>Hỗ trợ 24/7:</strong> Trợ lý AI luôn sẵn sàng trả lời câu hỏi</li>
+        </ul>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

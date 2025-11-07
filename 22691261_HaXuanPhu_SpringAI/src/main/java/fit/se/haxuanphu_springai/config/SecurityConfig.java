@@ -36,6 +36,7 @@ public class SecurityConfig {
                         .requestMatchers("/orders", "/orders/view/**").hasAnyRole("GUEST", "CUSTOMER", "ADMIN")
                         .requestMatchers("/orders/new", "/orders/save").hasAnyRole("CUSTOMER", "ADMIN")
                         .requestMatchers("/orderlines/**").hasAnyRole("CUSTOMER", "ADMIN")
+                        .requestMatchers("/ai/**").hasAnyRole("CUSTOMER", "ADMIN")
 
                         // ADMIN: Full CRUD access
                         .requestMatchers("/customers/new", "/customers/edit/**", "/customers/save", "/customers/delete/**").hasRole("ADMIN")
